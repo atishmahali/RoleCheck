@@ -168,10 +168,8 @@ function OnCallGenerator() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-1.5">Profile</label>
-              <select className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-                value={formData.profile} onChange={e => setFormData({...formData, profile: e.target.value})}>
-                <option>Frontend</option><option>Backend</option><option>Full Stack</option><option>DevOps</option><option>Data Science</option>
-              </select>
+              <input type="text" className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                value={formData.profile} onChange={e => setFormData({...formData, profile: e.target.value})} placeholder="e.g. Full Stack" />
             </div>
             <div>
               <label className="block text-sm font-semibold text-slate-700 mb-1.5">Difficulty</label>
