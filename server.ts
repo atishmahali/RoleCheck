@@ -1,20 +1,20 @@
 import express from "express";
-import { createServer as createViteServer } from "vite";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+export const app = express();
+const PORT = 3000;
 
-  app.use(express.json());
+app.use(express.json());
 
-  // API Routes
-  app.post("/api/generate-oncall-questions", async (req, res) => {
-    try {
-      const prompt = `Generate structured screening questions based on the following job description.
-      
+const apiRouter = express.Router();
+
+// API Routes
+apiRouter.post("/generate-oncall-questions", async (req, res) => {
+  try {
+    const prompt = `Generate structured screening questions based on the following job description.
+    
 Input:
 ${JSON.stringify(req.body, null, 2)}
 
@@ -36,17 +36,17 @@ Output Format:
 
 Ensure the output is valid JSON.`;
 
-      const response = await callLLM(prompt);
-      res.json(JSON.parse(response));
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    const response = await callLLM(prompt);
+    res.json(JSON.parse(response));
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
-  app.post("/api/improve-phone-screening", async (req, res) => {
-    try {
-      const prompt = `Improve the following phone screening questions to be more effective, clear, and comprehensive.
+apiRouter.post("/improve-phone-screening", async (req, res) => {
+  try {
+    const prompt = `Improve the following phone screening questions to be more effective, clear, and comprehensive.
 
 Input:
 ${JSON.stringify(req.body, null, 2)}
@@ -69,17 +69,17 @@ Output Format:
 
 Ensure the output is valid JSON.`;
 
-      const response = await callLLM(prompt);
-      res.json(JSON.parse(response));
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    const response = await callLLM(prompt);
+    res.json(JSON.parse(response));
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
-  app.post("/api/generate-hygiene-check", async (req, res) => {
-    try {
-      const prompt = `Generate fitment and soft skill questions for the following role.
+apiRouter.post("/generate-hygiene-check", async (req, res) => {
+  try {
+    const prompt = `Generate fitment and soft skill questions for the following role.
 
 Input:
 ${JSON.stringify(req.body, null, 2)}
@@ -102,20 +102,20 @@ Output Format:
 
 Ensure the output is valid JSON.`;
 
-      const response = await callLLM(prompt);
-      res.json(JSON.parse(response));
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    const response = await callLLM(prompt);
+    res.json(JSON.parse(response));
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
-  app.post("/api/generate-brand-pitch", async (req, res) => {
-    try {
-      const { companyName, jobTitle, rolesAndResponsibilities, techStack, duration, tone } = req.body;
-      
-      const prompt = `Generate a recruiter pitch script for the following role.
-      
+apiRouter.post("/generate-brand-pitch", async (req, res) => {
+  try {
+    const { companyName, jobTitle, rolesAndResponsibilities, techStack, duration, tone } = req.body;
+    
+    const prompt = `Generate a recruiter pitch script for the following role.
+    
 Company Name: ${companyName}
 Job Title: ${jobTitle}
 Roles and Responsibilities: ${rolesAndResponsibilities}
@@ -133,16 +133,21 @@ Output Format:
 
 Ensure the output is valid JSON.`;
 
-      const response = await callLLM(prompt);
-      res.json(JSON.parse(response));
-    } catch (error: any) {
-      console.error(error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+    const response = await callLLM(prompt);
+    res.json(JSON.parse(response));
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
+app.use("/api", apiRouter);
+app.use("/.netlify/functions/api", apiRouter);
+
+async function startServer() {
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
@@ -195,4 +200,6 @@ async function callLLM(prompt: string): Promise<string> {
   return data.choices[0].message.content;
 }
 
-startServer();
+if (!process.env.AWS_LAMBDA_FUNCTION_NAME && !process.env.VERCEL) {
+  startServer();
+}
