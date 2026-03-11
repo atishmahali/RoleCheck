@@ -1,12 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Copy, CheckCircle2, Bookmark, BookmarkCheck, LayoutGrid, ChevronRight, Briefcase, ArrowLeft, ArrowDownAZ, ArrowUpZA } from 'lucide-react';
+import { Search, Copy, CheckCircle2, Bookmark, BookmarkCheck, LayoutGrid, ChevronRight, Briefcase, ArrowLeft, ArrowDownAZ, ArrowUpZA, Sparkles } from 'lucide-react';
 import { roles, categories as roleCategories, Category as RoleCategory, Role } from './data/roles';
 import { skills, skillCategories, SkillCategory, Skill } from './data/skills';
+import AIInterviewGenerator from './components/AIInterviewGenerator';
 
-type Tab = 'roles' | 'skills';
+type Tab = 'roles' | 'skills' | 'ai';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('roles');
+  const [activeTab, setActiveTab] = useState<Tab>('ai');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRoleCategory, setSelectedRoleCategory] = useState<RoleCategory | 'All'>('All');
   const [selectedSkillCategory, setSelectedSkillCategory] = useState<SkillCategory | 'All'>('All');
@@ -258,28 +259,37 @@ export default function App() {
           
           <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Tech Interview Screener</h2>
           <p className="text-slate-600 text-lg max-w-3xl mb-8 leading-relaxed">
-            Search <span className="font-semibold text-slate-900 bg-pink-50 px-1 rounded">500+ screening questions across 50 tech roles and 100 technical skills</span> to help HR teams and hiring managers conduct strong first round interviews.
+            Search <span className="font-semibold text-slate-900 bg-pink-50 px-1 rounded">500+ screening questions across 50 roles and 100 skills</span> or generate <span className="font-semibold text-indigo-600 bg-indigo-50 px-1 rounded">AI powered interview questions instantly.</span>
           </p>
 
           {/* Global Search */}
-          <div className="relative max-w-3xl mb-8">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search roles or skills (e.g. Python, React, Data Scientist)..."
-              className="w-full pl-12 pr-4 py-4 bg-white border-2 border-slate-200 rounded-xl text-base focus:outline-none focus:ring-4 focus:ring-pink-500/10 focus:border-pink-500 shadow-sm transition-all font-medium placeholder:font-normal"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setSelectedRole(null);
-                setSelectedSkill(null);
-              }}
-            />
-          </div>
+          {activeTab !== 'ai' && (
+            <div className="relative max-w-3xl mb-8">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search roles or skills (e.g. Python, React, Data Scientist)..."
+                className="w-full pl-12 pr-4 py-4 bg-white border-2 border-slate-200 rounded-xl text-base focus:outline-none focus:ring-4 focus:ring-pink-500/10 focus:border-pink-500 shadow-sm transition-all font-medium placeholder:font-normal"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setSelectedRole(null);
+                  setSelectedSkill(null);
+                }}
+              />
+            </div>
+          )}
 
           {/* Tabs - Only show if not searching and no item selected */}
           {!searchQuery && !selectedRole && !selectedSkill && (
             <div className="flex gap-8 border-b border-slate-200">
+              <button 
+                onClick={() => setActiveTab('ai')}
+                className={`pb-4 text-sm font-semibold uppercase tracking-wider transition-colors relative flex items-center gap-1.5 ${activeTab === 'ai' ? 'text-indigo-600' : 'text-slate-500 hover:text-indigo-600'}`}
+              >
+                <Sparkles className="w-4 h-4" /> AI Interview Tools
+                {activeTab === 'ai' && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 rounded-t-full" />}
+              </button>
               <button 
                 onClick={() => setActiveTab('roles')}
                 className={`pb-4 text-sm font-semibold uppercase tracking-wider transition-colors relative ${activeTab === 'roles' ? 'text-pink-600' : 'text-slate-500 hover:text-slate-800'}`}
@@ -344,7 +354,7 @@ export default function App() {
         )}
 
         {/* Grid Views */}
-        {!searchQuery && !selectedRole && !selectedSkill && (
+        {!searchQuery && !selectedRole && !selectedSkill && activeTab !== 'ai' && (
           <div className="animate-in fade-in duration-300">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
               <div className="flex flex-wrap gap-2">
@@ -395,6 +405,11 @@ export default function App() {
               </div>
             )}
           </div>
+        )}
+
+        {/* AI Generator View */}
+        {!searchQuery && !selectedRole && !selectedSkill && activeTab === 'ai' && (
+          <AIInterviewGenerator onBack={() => setActiveTab('roles')} />
         )}
       </main>
     </div>
