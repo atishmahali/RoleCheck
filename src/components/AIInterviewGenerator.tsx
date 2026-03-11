@@ -266,15 +266,17 @@ function OnCallGenerator() {
       <div className="bg-slate-900 rounded-2xl p-8 shadow-xl text-slate-300 flex flex-col">
         <h3 className="text-xl font-bold text-white mb-6 flex justify-between items-center">
           Generated Output
-          {result && <CopyButton text={JSON.stringify(result, null, 2)} />}
+          {result && <CopyButton text={result} />}
         </h3>
-        <div className="flex-1 bg-slate-950 rounded-xl p-6 overflow-y-auto font-mono text-sm border border-slate-800">
+        <div className="flex-1 bg-slate-950 rounded-xl p-6 overflow-y-auto border border-slate-800">
           {loading ? (
             <div className="h-full flex items-center justify-center text-slate-500">
               <Loader2 className="w-8 h-8 animate-spin" />
             </div>
           ) : result ? (
-            <pre className="whitespace-pre-wrap text-emerald-400">{JSON.stringify(result, null, 2)}</pre>
+            <div className="prose prose-invert prose-emerald max-w-none">
+              <Markdown>{result}</Markdown>
+            </div>
           ) : (
             <div className="h-full flex items-center justify-center text-slate-600">
               Fill the form and click generate to see results here.
