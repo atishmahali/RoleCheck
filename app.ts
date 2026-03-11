@@ -27,7 +27,7 @@ async function callLLM(prompt: string): Promise<string> {
       messages: [
         {
           role: "system",
-          content: "You are an expert technical recruiter and interviewer. You generate high quality interview questions and scripts. Provide your response in clear, well-formatted plain text or markdown."
+          content: "You are an expert technical recruiter and interviewer. You generate high quality interview questions and scripts. Provide your response in clear, well-formatted plain text or markdown. Do NOT wrap your response in quotes. Do NOT output JSON."
         },
         {
           role: "user",
@@ -43,7 +43,23 @@ async function callLLM(prompt: string): Promise<string> {
   }
 
   const data = await response.json();
-  return data.choices[0].message.content;
+  let content = data.choices[0].message.content;
+  
+  // Sometimes the LLM might still return a JSON stringified text, so we unwrap it
+  try {
+    if (content.trim().startsWith('"') && content.trim().endsWith('"')) {
+      content = JSON.parse(content);
+    }
+  } catch (e) {
+    // Ignore parsing errors
+  }
+
+  // Replace literal '\n' strings with actual newlines just in case
+  if (typeof content === 'string') {
+    content = content.replace(/\\n/g, '\n');
+  }
+  
+  return content;
 }
 
 // API Routes
