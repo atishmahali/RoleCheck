@@ -23,28 +23,106 @@ export const skillCategories: SkillCategory[] = [
 
 export const skills: Skill[] = [
   {
+    "id": "python",
+    "name": "Python",
+    "category": "Programming Languages",
+    "description": "Screening questions and evaluation criteria for Python skills.",
+    "questions": [
+      "What types of applications or systems have you built using Python in production environments",
+      "What Python frameworks or libraries do you commonly use and why",
+      "How do you manage performance and memory efficiency in Python applications",
+      "Describe a complex problem you solved using Python and the approach you used",
+      "Can you rate yourself for the skills you mentioned and justify those ratings with examples"
+    ]
+  },
+  {
+    "id": "java",
+    "name": "Java",
+    "category": "Programming Languages",
+    "description": "Screening questions and evaluation criteria for Java skills.",
+    "questions": [
+      "What enterprise applications or backend systems have you built using Java",
+      "What Java frameworks such as Spring or Hibernate have you used in production",
+      "How do you manage concurrency and multithreading in Java applications",
+      "How do you design scalable Java services for high traffic systems",
+      "Can you rate yourself for the skills you mentioned and justify those ratings with examples"
+    ]
+  },
+  {
     "id": "javascript",
     "name": "JavaScript",
-    "category": "Frontend Technologies",
+    "category": "Programming Languages",
     "description": "Screening questions and evaluation criteria for JavaScript skills.",
     "questions": [
-      "What types of applications have you built using JavaScript in production environments",
-      "How do you manage asynchronous operations in JavaScript applications",
-      "How do you structure large JavaScript codebases for maintainability",
-      "What debugging tools do you commonly use while developing JavaScript applications",
+      "What web applications have you built using JavaScript",
+      "How do you manage asynchronous programming in JavaScript",
+      "What frontend or backend frameworks have you used with JavaScript",
+      "How do you structure maintainable and scalable JavaScript applications",
       "Can you rate yourself for the skills you mentioned and justify those ratings with examples"
     ]
   },
   {
     "id": "typescript",
     "name": "TypeScript",
-    "category": "Frontend Technologies",
+    "category": "Programming Languages",
     "description": "Screening questions and evaluation criteria for TypeScript skills.",
     "questions": [
-      "What projects have you built using TypeScript instead of plain JavaScript",
+      "What projects have you built using TypeScript and why did you choose it over JavaScript",
       "How do you design strong type systems for large applications",
-      "How do you integrate TypeScript with frameworks like React or Node.js",
-      "What advantages have you observed when migrating from JavaScript to TypeScript",
+      "How do you integrate TypeScript with modern frameworks like React or Node",
+      "What benefits have you seen when migrating a codebase from JavaScript to TypeScript",
+      "Can you rate yourself for the skills you mentioned and justify those ratings with examples"
+    ]
+  },
+  {
+    "id": "cpp",
+    "name": "C++",
+    "category": "Programming Languages",
+    "description": "Screening questions and evaluation criteria for C++ skills.",
+    "questions": [
+      "What types of systems or applications have you developed using C++",
+      "How do you manage memory allocation and avoid memory leaks in C++",
+      "What experience do you have with object oriented programming in C++",
+      "How do you optimize performance in C++ based applications",
+      "Can you rate yourself for the skills you mentioned and justify those ratings with examples"
+    ]
+  },
+  {
+    "id": "csharp",
+    "name": "C#",
+    "category": "Programming Languages",
+    "description": "Screening questions and evaluation criteria for C# skills.",
+    "questions": [
+      "What applications have you built using C# and the .NET framework",
+      "What experience do you have with ASP.NET for building web applications",
+      "How do you handle asynchronous programming in C#",
+      "How do you structure scalable enterprise applications using C#",
+      "Can you rate yourself for the skills you mentioned and justify those ratings with examples"
+    ]
+  },
+  {
+    "id": "go",
+    "name": "Go (Golang)",
+    "category": "Programming Languages",
+    "description": "Screening questions and evaluation criteria for Go skills.",
+    "questions": [
+      "What backend services or distributed systems have you built using Go",
+      "How do you handle concurrency using goroutines and channels",
+      "How do you structure Go projects for maintainability and scalability",
+      "What performance advantages have you experienced while using Go",
+      "Can you rate yourself for the skills you mentioned and justify those ratings with examples"
+    ]
+  },
+  {
+    "id": "rust",
+    "name": "Rust",
+    "category": "Programming Languages",
+    "description": "Screening questions and evaluation criteria for Rust skills.",
+    "questions": [
+      "What systems programming projects have you built using Rust",
+      "How do you manage memory safety using Rust ownership and borrowing concepts",
+      "What experience do you have with asynchronous programming in Rust",
+      "What benefits have you seen when using Rust compared to other systems languages",
       "Can you rate yourself for the skills you mentioned and justify those ratings with examples"
     ]
   },
@@ -701,26 +779,26 @@ export const skills: Skill[] = [
   {
     "id": "swift",
     "name": "Swift",
-    "category": "Other",
+    "category": "Programming Languages",
     "description": "Screening questions and evaluation criteria for Swift skills.",
     "questions": [
       "What iOS applications have you built using Swift",
       "How do you manage memory and performance in Swift applications",
-      "What design patterns do you commonly use in iOS development",
-      "How do you handle networking and API integration in Swift apps",
+      "What experience do you have with SwiftUI or UIKit",
+      "How do you structure maintainable iOS application architecture",
       "Can you rate yourself for the skills you mentioned and justify those ratings with examples"
     ]
   },
   {
     "id": "kotlin",
     "name": "Kotlin",
-    "category": "Other",
+    "category": "Programming Languages",
     "description": "Screening questions and evaluation criteria for Kotlin skills.",
     "questions": [
       "What Android applications have you built using Kotlin",
-      "How do you structure Android projects for maintainability and scalability",
-      "What experience do you have with coroutines and asynchronous programming in Kotlin",
-      "How do you manage UI and lifecycle events in Android development",
+      "How do you use coroutines for asynchronous programming in Kotlin",
+      "What Android architecture patterns have you used such as MVVM",
+      "How do you manage performance and lifecycle events in Android apps",
       "Can you rate yourself for the skills you mentioned and justify those ratings with examples"
     ]
   },

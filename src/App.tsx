@@ -238,7 +238,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 pt-8 pb-0 px-8 sticky top-0 z-10">
+      <header className="bg-white border-b border-slate-200 pt-8 pb-0 px-8">
         <div className="max-w-6xl mx-auto">
           <button 
             onClick={() => {
