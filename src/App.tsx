@@ -153,9 +153,9 @@ export default function App() {
       <div className="max-w-4xl mx-auto w-full pb-12 animate-in fade-in slide-in-from-bottom-4 duration-300">
         <button 
           onClick={() => isRole ? setSelectedRole(null) : setSelectedSkill(null)}
-          className="flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 mb-6 transition-colors"
+          className="flex items-center text-base font-semibold text-slate-500 hover:text-slate-800 mb-6 transition-colors group"
         >
-          <ArrowLeft className="w-4 h-4 mr-1" /> Back to {isRole ? 'Roles' : 'Skills'}
+          <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" /> Back to {isRole ? 'Roles' : 'Skills'}
         </button>
 
         <div className="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm mb-8">
@@ -239,15 +239,22 @@ export default function App() {
       {/* Header */}
       <header className="bg-white border-b border-slate-200 pt-8 pb-0 px-8 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-2 mb-6">
-            <Briefcase className="w-7 h-7 text-pink-500" />
+          <button 
+            onClick={() => {
+              setSelectedRole(null);
+              setSelectedSkill(null);
+              setSearchQuery('');
+            }}
+            className="flex items-center gap-2 mb-6 hover:opacity-80 transition-opacity text-left"
+          >
+            <Briefcase className="w-8 h-8 text-pink-500" />
             <div className="flex flex-col">
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent leading-none">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent leading-none tracking-tight">
                 RoleCheck
               </h1>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">by Intervue.io</span>
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mt-1">by Intervue.io</span>
             </div>
-          </div>
+          </button>
           
           <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Tech Interview Screener</h2>
           <p className="text-slate-600 text-lg max-w-3xl mb-8 leading-relaxed">
