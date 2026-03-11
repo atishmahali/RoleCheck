@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, PhoneCall, Phone, CheckSquare, MessageSquareText, Loader2, Plus, X, Copy, CheckCircle2 } from 'lucide-react';
+import Markdown from 'react-markdown';
 
 type AITool = 'oncall' | 'phone' | 'hygiene' | 'brand' | null;
 
@@ -138,7 +139,7 @@ function OnCallGenerator() {
       
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
-      setResult(data);
+      setResult(data.text);
     } catch (err: any) {
       setError(err.message || 'An error occurred');
     } finally {
@@ -286,7 +287,7 @@ function OnCallGenerator() {
 }
 
 function PhoneScreeningImprover() {
-  const [inputJson, setInputJson] = useState('');
+  const [inputText, setInputText] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState('');
@@ -295,22 +296,15 @@ function PhoneScreeningImprover() {
     setLoading(true);
     setError('');
     try {
-      let parsedInput;
-      try {
-        parsedInput = JSON.parse(inputJson);
-      } catch (e) {
-        throw new Error("Invalid JSON input. Please provide valid JSON from the On Call Questions generator.");
-      }
-
       const res = await fetch('/api/improve-phone-screening', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(parsedInput)
+        body: JSON.stringify({ text: inputText })
       });
       
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
-      setResult(data);
+      setResult(data.text);
     } catch (err: any) {
       setError(err.message || 'An error occurred');
     } finally {
@@ -324,18 +318,18 @@ function PhoneScreeningImprover() {
         <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
           <Phone className="w-6 h-6 text-emerald-500" /> Improve Phone Screening
         </h3>
-        <p className="text-slate-600 mb-4 text-sm">Paste the JSON output from the On Call Questions generator below to improve it.</p>
+        <p className="text-slate-600 mb-4 text-sm">Paste the questions from the On Call Questions generator below to improve them.</p>
         
         <textarea 
-          className="flex-1 w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-mono text-sm min-h-[300px]"
-          placeholder="{\n  &quot;Questions&quot;: [\n    ...\n  ]\n}"
-          value={inputJson}
-          onChange={e => setInputJson(e.target.value)}
+          className="flex-1 w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm min-h-[300px]"
+          placeholder="Paste your questions here..."
+          value={inputText}
+          onChange={e => setInputText(e.target.value)}
         />
 
         <button 
           onClick={handleImprove}
-          disabled={loading || !inputJson.trim()}
+          disabled={loading || !inputText.trim()}
           className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-lg transition-colors flex justify-center items-center mt-6 disabled:opacity-70"
         >
           {loading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Improving...</> : 'Improve Questions'}
@@ -347,15 +341,17 @@ function PhoneScreeningImprover() {
       <div className="bg-slate-900 rounded-2xl p-8 shadow-xl text-slate-300 flex flex-col">
         <h3 className="text-xl font-bold text-white mb-6 flex justify-between items-center">
           Improved Output
-          {result && <CopyButton text={JSON.stringify(result, null, 2)} />}
+          {result && <CopyButton text={result} />}
         </h3>
-        <div className="flex-1 bg-slate-950 rounded-xl p-6 overflow-y-auto font-mono text-sm border border-slate-800">
+        <div className="flex-1 bg-slate-950 rounded-xl p-6 overflow-y-auto border border-slate-800">
           {loading ? (
             <div className="h-full flex items-center justify-center text-slate-500">
               <Loader2 className="w-8 h-8 animate-spin" />
             </div>
           ) : result ? (
-            <pre className="whitespace-pre-wrap text-emerald-400">{JSON.stringify(result, null, 2)}</pre>
+            <div className="prose prose-invert prose-emerald max-w-none">
+              <Markdown>{result}</Markdown>
+            </div>
           ) : (
             <div className="h-full flex items-center justify-center text-slate-600">
               Improved results will appear here.
@@ -395,7 +391,7 @@ function HygieneCheckGenerator() {
       
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
-      setResult(data);
+      setResult(data.text);
     } catch (err: any) {
       setError(err.message || 'An error occurred');
     } finally {
@@ -442,15 +438,17 @@ function HygieneCheckGenerator() {
       <div className="bg-slate-900 rounded-2xl p-8 shadow-xl text-slate-300 flex flex-col">
         <h3 className="text-xl font-bold text-white mb-6 flex justify-between items-center">
           Generated Output
-          {result && <CopyButton text={JSON.stringify(result, null, 2)} />}
+          {result && <CopyButton text={result} />}
         </h3>
-        <div className="flex-1 bg-slate-950 rounded-xl p-6 overflow-y-auto font-mono text-sm border border-slate-800">
+        <div className="flex-1 bg-slate-950 rounded-xl p-6 overflow-y-auto border border-slate-800">
           {loading ? (
             <div className="h-full flex items-center justify-center text-slate-500">
               <Loader2 className="w-8 h-8 animate-spin" />
             </div>
           ) : result ? (
-            <pre className="whitespace-pre-wrap text-emerald-400">{JSON.stringify(result, null, 2)}</pre>
+            <div className="prose prose-invert prose-emerald max-w-none">
+              <Markdown>{result}</Markdown>
+            </div>
           ) : (
             <div className="h-full flex items-center justify-center text-slate-600">
               Fill the form and click generate to see results here.
@@ -487,7 +485,7 @@ function BrandPitchGenerator() {
       
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
-      setResult(data);
+      setResult(data.text);
     } catch (err: any) {
       setError(err.message || 'An error occurred');
     } finally {
@@ -556,15 +554,17 @@ function BrandPitchGenerator() {
       <div className="bg-slate-900 rounded-2xl p-8 shadow-xl text-slate-300 flex flex-col">
         <h3 className="text-xl font-bold text-white mb-6 flex justify-between items-center">
           Generated Output
-          {result && <CopyButton text={JSON.stringify(result, null, 2)} />}
+          {result && <CopyButton text={result} />}
         </h3>
-        <div className="flex-1 bg-slate-950 rounded-xl p-6 overflow-y-auto font-mono text-sm border border-slate-800">
+        <div className="flex-1 bg-slate-950 rounded-xl p-6 overflow-y-auto border border-slate-800">
           {loading ? (
             <div className="h-full flex items-center justify-center text-slate-500">
               <Loader2 className="w-8 h-8 animate-spin" />
             </div>
           ) : result ? (
-            <pre className="whitespace-pre-wrap text-emerald-400">{JSON.stringify(result, null, 2)}</pre>
+            <div className="prose prose-invert prose-emerald max-w-none">
+              <Markdown>{result}</Markdown>
+            </div>
           ) : (
             <div className="h-full flex items-center justify-center text-slate-600">
               Fill the form and click generate to see results here.
@@ -591,7 +591,7 @@ function CopyButton({ text }: { text: string }) {
       className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors text-xs font-medium"
     >
       {copied ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-      {copied ? 'Copied' : 'Copy JSON'}
+      {copied ? 'Copied' : 'Copy Text'}
     </button>
   );
 }

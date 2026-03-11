@@ -27,14 +27,13 @@ async function callLLM(prompt: string): Promise<string> {
       messages: [
         {
           role: "system",
-          content: "You are an expert technical recruiter and interviewer. You generate high quality interview questions and scripts. Always output valid JSON without markdown formatting."
+          content: "You are an expert technical recruiter and interviewer. You generate high quality interview questions and scripts. Provide your response in clear, well-formatted plain text or markdown."
         },
         {
           role: "user",
           content: prompt
         }
-      ],
-      response_format: { type: "json_object" }
+      ]
     })
   });
 
@@ -55,26 +54,10 @@ apiRouter.post("/generate-oncall-questions", async (req, res) => {
 Input:
 ${JSON.stringify(req.body, null, 2)}
 
-Output Format:
-{
-  "Questions": [
-    {
-      "Skill/Rubric Name": "string",
-      "isRubric": "True/False",
-      "Questions": [
-        {
-          "Q": "string",
-          "Keywords": ["string"]
-        }
-      ]
-    }
-  ]
-}
-
-Ensure the output is valid JSON.`;
+Please provide the output in a clear, readable text format with sections for each Skill/Rubric, and list the questions and keywords under each.`;
 
     const response = await callLLM(prompt);
-    res.json(JSON.parse(response));
+    res.json({ text: response });
   } catch (error: any) {
     console.error(error);
     res.status(500).json({ error: error.message });
@@ -86,28 +69,12 @@ apiRouter.post("/improve-phone-screening", async (req, res) => {
     const prompt = `Improve the following phone screening questions to be more effective, clear, and comprehensive.
 
 Input:
-${JSON.stringify(req.body, null, 2)}
+${req.body.text || JSON.stringify(req.body, null, 2)}
 
-Output Format:
-{
-  "Questions": [
-    {
-      "Rubric": "string",
-      "isRubric": "True/False",
-      "Questions": [
-        {
-          "Q": "string",
-          "Keywords": ["string"]
-        }
-      ]
-    }
-  ]
-}
-
-Ensure the output is valid JSON.`;
+Please provide the improved questions in a clear, readable text format, organized by Rubric.`;
 
     const response = await callLLM(prompt);
-    res.json(JSON.parse(response));
+    res.json({ text: response });
   } catch (error: any) {
     console.error(error);
     res.status(500).json({ error: error.message });
@@ -121,26 +88,10 @@ apiRouter.post("/generate-hygiene-check", async (req, res) => {
 Input:
 ${JSON.stringify(req.body, null, 2)}
 
-Output Format:
-{
-  "fitment_check_questions": [
-    {
-      "question": "string",
-      "keywords": ["string"]
-    }
-  ],
-  "soft_skills_check_questions": [
-    {
-      "question": "string",
-      "keywords": ["string"]
-    }
-  ]
-}
-
-Ensure the output is valid JSON.`;
+Please provide the output in a clear, readable text format, separated into "Fitment Check Questions" and "Soft Skills Check Questions", with keywords for each.`;
 
     const response = await callLLM(prompt);
-    res.json(JSON.parse(response));
+    res.json({ text: response });
   } catch (error: any) {
     console.error(error);
     res.status(500).json({ error: error.message });
@@ -160,18 +111,10 @@ Tech Stack: ${techStack}
 Desired Duration: ${duration}
 Desired Tone: ${tone}
 
-Output Format:
-{
-  "Intro": "string",
-  "Details": "string",
-  "Hook": "string",
-  "Outro": "string"
-}
-
-Ensure the output is valid JSON.`;
+Please provide the pitch script in a clear, readable text format, structured with an Intro, Details, Hook, and Outro.`;
 
     const response = await callLLM(prompt);
-    res.json(JSON.parse(response));
+    res.json({ text: response });
   } catch (error: any) {
     console.error(error);
     res.status(500).json({ error: error.message });
