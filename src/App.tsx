@@ -297,7 +297,7 @@ export default function App() {
           <div className="bg-slate-900 dark:bg-slate-950 rounded-3xl p-8 shadow-xl text-slate-300 border border-slate-800">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
               <h3 className="text-2xl font-extrabold text-white flex items-center gap-3">
-                <Sparkles className="w-6 h-6 text-indigo-400" /> Expected Answers & Keywords
+                <Sparkles className="w-6 h-6 text-indigo-400" /> Expected Keywords
               </h3>
               {!generatedAnswers && (
                 <button
@@ -330,7 +330,7 @@ export default function App() {
             
             {!generatedAnswers && !generatingAnswers && !answersError && (
               <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-8 text-center">
-                <p className="text-slate-400 font-medium">Click the button above to generate expected answers and keywords for these screening questions using AI.</p>
+                <p className="text-slate-400 font-medium">Click the button above to generate expected keywords for these screening questions using AI.</p>
               </div>
             )}
           </div>

@@ -46,7 +46,7 @@ export default function AIInterviewGenerator({ onBack }: { onBack: () => void })
             <ToolCard 
               icon={<PhoneCall className="w-8 h-8 text-blue-500" />}
               title="Comprehensive Phone Screening"
-              description="Generate highly effective screening questions, complete with expected answers and highlighted keywords based on the job description, seniority, and engineering bar."
+              description="Generate highly effective screening questions, complete with highlighted expected keywords based on the job description, seniority, and engineering bar."
               onClick={() => setActiveTool('oncall')}
             />
             <ToolCard 

@@ -65,12 +65,12 @@ async function callLLM(prompt: string): Promise<string> {
 // API Routes
 apiRouter.post("/generate-oncall-questions", async (req, res) => {
   try {
-    const prompt = `Generate structured, highly effective screening questions based on the following job description.
+    const prompt = `Generate structured, highly effective screening questions based on the following job description. These questions are meant for a phone screening conversation, so they should be conversational, easy to understand over the phone, and focused on high-signal topics rather than deep coding exercises.
     
 Input:
 ${JSON.stringify(req.body, null, 2)}
 
-For each question, you MUST provide an "Expected Answer" and highlight the "Expected Keywords" in **bold**. Ensure the questions are clear, comprehensive, and perfectly calibrated to the seniority and engineering bar. Format the output clearly using Markdown, with sections for each Skill/Rubric.`;
+For each question, you MUST provide a list of expected keywords. The expected keywords MUST be placed on the next line immediately following the question. You MUST explicitly start the line with the exact text "Expected Keywords:" followed by the keywords highlighted in **bold**. Do NOT provide an expected answer, only the keywords. Ensure the questions are clear, comprehensive, and perfectly calibrated to the seniority and engineering bar. Format the output clearly using Markdown, with sections for each Skill/Rubric.`;
 
     const response = await callLLM(prompt);
     res.json({ text: response });
@@ -84,13 +84,13 @@ apiRouter.post("/generate-answers", async (req, res) => {
   try {
     const { title, questions } = req.body;
     const prompt = `You are an expert technical interviewer. I will provide you with a role/skill and a list of screening questions. 
-For each question, provide a concise "Expected Answer" and a list of "Expected Keywords" (highlighted in **bold**).
+For each question, provide a list of expected keywords. The expected keywords MUST be placed on the next line immediately following the question. You MUST explicitly start the line with the exact text "Expected Keywords:" followed by the keywords highlighted in **bold**. Do NOT provide an expected answer, only the keywords.
 
 Role/Skill: ${title}
 Questions:
 ${questions.map((q: string, i: number) => `${i + 1}. ${q}`).join('\n')}
 
-Format the output clearly using Markdown, listing each question followed by its Expected Answer and Expected Keywords.`;
+Format the output clearly using Markdown, listing each question followed immediately by its Expected Keywords on the next line.`;
 
     const response = await callLLM(prompt);
     res.json({ text: response });
