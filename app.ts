@@ -65,12 +65,32 @@ async function callLLM(prompt: string): Promise<string> {
 // API Routes
 apiRouter.post("/generate-oncall-questions", async (req, res) => {
   try {
-    const prompt = `Generate structured screening questions based on the following job description.
+    const prompt = `Generate structured, highly effective screening questions based on the following job description.
     
 Input:
 ${JSON.stringify(req.body, null, 2)}
 
-Please provide the output in a clear, readable text format with sections for each Skill/Rubric, and list the questions and keywords under each.`;
+For each question, you MUST provide an "Expected Answer" and highlight the "Expected Keywords" in **bold**. Ensure the questions are clear, comprehensive, and perfectly calibrated to the seniority and engineering bar. Format the output clearly using Markdown, with sections for each Skill/Rubric.`;
+
+    const response = await callLLM(prompt);
+    res.json({ text: response });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+apiRouter.post("/generate-answers", async (req, res) => {
+  try {
+    const { title, questions } = req.body;
+    const prompt = `You are an expert technical interviewer. I will provide you with a role/skill and a list of screening questions. 
+For each question, provide a concise "Expected Answer" and a list of "Expected Keywords" (highlighted in **bold**).
+
+Role/Skill: ${title}
+Questions:
+${questions.map((q: string, i: number) => `${i + 1}. ${q}`).join('\n')}
+
+Format the output clearly using Markdown, listing each question followed by its Expected Answer and Expected Keywords.`;
 
     const response = await callLLM(prompt);
     res.json({ text: response });

@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Copy, CheckCircle2, Bookmark, BookmarkCheck, LayoutGrid, ChevronRight, Briefcase, ArrowLeft, ArrowDownAZ, ArrowUpZA, Sparkles, Moon, Sun } from 'lucide-react';
+import { Search, Copy, CheckCircle2, Bookmark, BookmarkCheck, LayoutGrid, ChevronRight, Briefcase, ArrowLeft, ArrowDownAZ, ArrowUpZA, Sparkles, Moon, Sun, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import Markdown from 'react-markdown';
 import { roles, categories as roleCategories, Category as RoleCategory, Role } from './data/roles';
 import { skills, skillCategories, SkillCategory, Skill } from './data/skills';
 import AIInterviewGenerator from './components/AIInterviewGenerator';
@@ -20,6 +21,10 @@ export default function App() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [copied, setCopied] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  
+  const [generatingAnswers, setGeneratingAnswers] = useState(false);
+  const [generatedAnswers, setGeneratedAnswers] = useState<string | null>(null);
+  const [answersError, setAnswersError] = useState('');
 
   // Handle theme
   useEffect(() => {
@@ -156,6 +161,8 @@ export default function App() {
           else setSelectedSkill(item as Skill);
           setSearchQuery('');
           setActiveTab(type);
+          setGeneratedAnswers(null);
+          setAnswersError('');
         }}
         className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 hover:border-pink-300 dark:hover:border-pink-500/50 hover:shadow-xl hover:shadow-pink-500/5 dark:hover:shadow-pink-500/10 transition-all cursor-pointer group flex flex-col h-full relative overflow-hidden"
       >
@@ -183,6 +190,25 @@ export default function App() {
   const renderDetails = (item: Role | Skill, type: Tab) => {
     const isRole = type === 'roles';
     const title = isRole ? (item as Role).title : (item as Skill).name;
+
+    const handleGenerateAnswers = async () => {
+      setGeneratingAnswers(true);
+      setAnswersError('');
+      try {
+        const res = await fetch('/api/generate-answers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, questions: item.questions })
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        setGeneratedAnswers(data.text);
+      } catch (err: any) {
+        setAnswersError(err.message || 'Failed to generate answers');
+      } finally {
+        setGeneratingAnswers(false);
+      }
+    };
 
     return (
       <motion.div 
@@ -254,7 +280,7 @@ export default function App() {
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Screening Questions</h3>
             <span className="text-sm text-slate-600 dark:text-slate-400 font-bold bg-slate-200/50 dark:bg-slate-800 px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-700">{item.questions.length} Questions</span>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-4 mb-12">
             {item.questions.map((question, index) => (
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
@@ -274,6 +300,47 @@ export default function App() {
               </motion.div>
             ))}
           </div>
+
+          <div className="bg-slate-900 dark:bg-slate-950 rounded-3xl p-8 shadow-xl text-slate-300 border border-slate-800">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+              <h3 className="text-2xl font-extrabold text-white flex items-center gap-3">
+                <Sparkles className="w-6 h-6 text-indigo-400" /> Expected Answers & Keywords
+              </h3>
+              {!generatedAnswers && (
+                <button
+                  onClick={handleGenerateAnswers}
+                  disabled={generatingAnswers}
+                  className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-colors flex items-center justify-center disabled:opacity-70 shadow-lg shadow-indigo-500/20"
+                >
+                  {generatingAnswers ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating...</> : 'Generate with AI'}
+                </button>
+              )}
+            </div>
+
+            {answersError && (
+              <div className="p-4 bg-red-500/10 text-red-400 border border-red-500/20 rounded-xl text-sm mb-6 font-medium">
+                {answersError}
+              </div>
+            )}
+
+            {generatedAnswers && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-slate-950 dark:bg-black rounded-2xl p-6 md:p-8 overflow-y-auto border border-slate-800 shadow-inner"
+              >
+                <div className="prose prose-invert prose-indigo max-w-none">
+                  <Markdown>{generatedAnswers}</Markdown>
+                </div>
+              </motion.div>
+            )}
+            
+            {!generatedAnswers && !generatingAnswers && !answersError && (
+              <div className="bg-slate-800/50 border border-slate-700/50 rounded-2xl p-8 text-center">
+                <p className="text-slate-400 font-medium">Click the button above to generate expected answers and keywords for these screening questions using AI.</p>
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
     );
@@ -290,6 +357,8 @@ export default function App() {
                 setSelectedRole(null);
                 setSelectedSkill(null);
                 setSearchQuery('');
+                setGeneratedAnswers(null);
+                setAnswersError('');
               }}
               className="flex items-center gap-3 mb-8 hover:opacity-80 transition-opacity text-left group"
             >
@@ -333,6 +402,8 @@ export default function App() {
                   setSearchQuery(e.target.value);
                   setSelectedRole(null);
                   setSelectedSkill(null);
+                  setGeneratedAnswers(null);
+                  setAnswersError('');
                 }}
               />
             </motion.div>

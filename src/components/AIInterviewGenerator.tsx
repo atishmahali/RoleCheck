@@ -3,7 +3,7 @@ import { ArrowLeft, PhoneCall, Phone, CheckSquare, MessageSquareText, Loader2, P
 import Markdown from 'react-markdown';
 import { motion } from 'motion/react';
 
-type AITool = 'oncall' | 'phone' | 'hygiene' | 'brand' | null;
+type AITool = 'oncall' | 'hygiene' | 'brand' | null;
 
 export default function AIInterviewGenerator({ onBack }: { onBack: () => void }) {
   const [activeTool, setActiveTool] = useState<AITool>(null);
@@ -45,15 +45,9 @@ export default function AIInterviewGenerator({ onBack }: { onBack: () => void })
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <ToolCard 
               icon={<PhoneCall className="w-8 h-8 text-blue-500" />}
-              title="On Call Questions"
-              description="Generate structured screening questions based on the job description, seniority, and engineering bar."
+              title="Comprehensive Phone Screening"
+              description="Generate highly effective screening questions, complete with expected answers and highlighted keywords based on the job description, seniority, and engineering bar."
               onClick={() => setActiveTool('oncall')}
-            />
-            <ToolCard 
-              icon={<Phone className="w-8 h-8 text-emerald-500" />}
-              title="Phone Screening Questions"
-              description="Improve existing phone screening questions to be more effective, clear, and comprehensive."
-              onClick={() => setActiveTool('phone')}
             />
             <ToolCard 
               icon={<CheckSquare className="w-8 h-8 text-amber-500" />}
@@ -83,7 +77,6 @@ export default function AIInterviewGenerator({ onBack }: { onBack: () => void })
           </button>
           
           {activeTool === 'oncall' && <OnCallGenerator />}
-          {activeTool === 'phone' && <PhoneScreeningImprover />}
           {activeTool === 'hygiene' && <HygieneCheckGenerator />}
           {activeTool === 'brand' && <BrandPitchGenerator />}
         </motion.div>
@@ -167,7 +160,7 @@ function OnCallGenerator() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-none">
         <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-6 flex items-center gap-3">
-          <PhoneCall className="w-6 h-6 text-blue-500" /> On Call Questions
+          <PhoneCall className="w-6 h-6 text-blue-500" /> Comprehensive Phone Screening
         </h3>
         
         <div className="space-y-5">
@@ -294,83 +287,6 @@ function OnCallGenerator() {
           ) : (
             <div className="h-full flex items-center justify-center text-slate-600 font-medium">
               Fill the form and click generate to see results here.
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PhoneScreeningImprover() {
-  const [inputText, setInputText] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
-  const [error, setError] = useState('');
-
-  const handleImprove = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const res = await fetch('/api/improve-phone-screening', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: inputText })
-      });
-      
-      if (!res.ok) throw new Error(await res.text());
-      const data = await res.json();
-      setResult(data.text);
-    } catch (err: any) {
-      setError(err.message || 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-none flex flex-col">
-        <h3 className="text-2xl font-extrabold text-slate-900 dark:text-white mb-6 flex items-center gap-3">
-          <Phone className="w-6 h-6 text-emerald-500" /> Improve Phone Screening
-        </h3>
-        <p className="text-slate-600 dark:text-slate-400 mb-6 text-sm font-medium">Paste the questions from the On Call Questions generator below to improve them.</p>
-        
-        <textarea 
-          className="flex-1 w-full p-5 bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm min-h-[300px] text-slate-900 dark:text-white resize-none"
-          placeholder="Paste your questions here..."
-          value={inputText}
-          onChange={e => setInputText(e.target.value)}
-        />
-
-        <button 
-          onClick={handleImprove}
-          disabled={loading || !inputText.trim()}
-          className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-lg transition-colors flex justify-center items-center mt-8 disabled:opacity-70 shadow-lg shadow-emerald-500/20"
-        >
-          {loading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Improving...</> : 'Improve Questions'}
-        </button>
-        
-        {error && <div className="p-4 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 rounded-xl text-sm mt-4 font-medium">{error}</div>}
-      </div>
-
-      <div className="bg-slate-900 dark:bg-slate-950 rounded-3xl p-8 shadow-xl text-slate-300 flex flex-col border border-slate-800">
-        <h3 className="text-2xl font-extrabold text-white mb-6 flex justify-between items-center">
-          Improved Output
-          {result && <CopyButton text={result} />}
-        </h3>
-        <div className="flex-1 bg-slate-950 dark:bg-black rounded-2xl p-6 md:p-8 overflow-y-auto border border-slate-800 shadow-inner">
-          {loading ? (
-            <div className="h-full flex items-center justify-center text-slate-500">
-              <Loader2 className="w-8 h-8 animate-spin" />
-            </div>
-          ) : result ? (
-            <div className="prose prose-invert prose-emerald max-w-none">
-              <Markdown>{result}</Markdown>
-            </div>
-          ) : (
-            <div className="h-full flex items-center justify-center text-slate-600 font-medium">
-              Improved results will appear here.
             </div>
           )}
         </div>
