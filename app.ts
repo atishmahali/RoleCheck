@@ -65,12 +65,24 @@ async function callLLM(prompt: string): Promise<string> {
 // API Routes
 apiRouter.post("/generate-oncall-questions", async (req, res) => {
   try {
-    const prompt = `Generate structured, highly effective screening questions based on the following job description. These questions are meant for a phone screening conversation, so they should be conversational, easy to understand over the phone, and focused on high-signal topics rather than deep coding exercises.
+    const { type, ...inputData } = req.body;
+    let prompt = "";
+    
+    if (type === 'answers') {
+      prompt = `Generate structured, highly effective screening questions based on the following job description. These questions are meant for a phone screening conversation, so they should be conversational, easy to understand over the phone, and focused on high-signal topics rather than deep coding exercises.
     
 Input:
-${JSON.stringify(req.body, null, 2)}
+${JSON.stringify(inputData, null, 2)}
+
+For each question, you MUST provide an "Expected Answer" and a list of "Expected Keywords" (highlighted in **bold**). Ensure the questions are clear, comprehensive, and perfectly calibrated to the seniority and engineering bar. Format the output clearly using Markdown, with sections for each Skill/Rubric.`;
+    } else {
+      prompt = `Generate structured, highly effective screening questions based on the following job description. These questions are meant for a phone screening conversation, so they should be conversational, easy to understand over the phone, and focused on high-signal topics rather than deep coding exercises.
+    
+Input:
+${JSON.stringify(inputData, null, 2)}
 
 For each question, you MUST provide a list of expected keywords. The expected keywords MUST be placed on the next line immediately following the question. You MUST explicitly start the line with the exact text "Expected Keywords:" followed by the keywords highlighted in **bold**. Do NOT provide an expected answer, only the keywords. Ensure the questions are clear, comprehensive, and perfectly calibrated to the seniority and engineering bar. Format the output clearly using Markdown, with sections for each Skill/Rubric.`;
+    }
 
     const response = await callLLM(prompt);
     res.json({ text: response });
@@ -82,8 +94,20 @@ For each question, you MUST provide a list of expected keywords. The expected ke
 
 apiRouter.post("/generate-answers", async (req, res) => {
   try {
-    const { title, questions } = req.body;
-    const prompt = `You are an expert technical interviewer. I will provide you with a role/skill and a list of screening questions. 
+    const { title, questions, type } = req.body;
+    let prompt = "";
+    
+    if (type === 'answers') {
+      prompt = `You are an expert technical interviewer. I will provide you with a role/skill and a list of screening questions. 
+For each question, provide a concise "Expected Answer" and a list of "Expected Keywords" (highlighted in **bold**).
+
+Role/Skill: ${title}
+Questions:
+${questions.map((q: string, i: number) => `${i + 1}. ${q}`).join('\n')}
+
+Format the output clearly using Markdown, listing each question followed by its Expected Answer and Expected Keywords.`;
+    } else {
+      prompt = `You are an expert technical interviewer. I will provide you with a role/skill and a list of screening questions. 
 For each question, provide a list of expected keywords. The expected keywords MUST be placed on the next line immediately following the question. You MUST explicitly start the line with the exact text "Expected Keywords:" followed by the keywords highlighted in **bold**. Do NOT provide an expected answer, only the keywords.
 
 Role/Skill: ${title}
@@ -91,6 +115,22 @@ Questions:
 ${questions.map((q: string, i: number) => `${i + 1}. ${q}`).join('\n')}
 
 Format the output clearly using Markdown, listing each question followed immediately by its Expected Keywords on the next line.`;
+    }
+
+    const response = await callLLM(prompt);
+    res.json({ text: response });
+  } catch (error: any) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+apiRouter.post("/generate-custom-questions", async (req, res) => {
+  try {
+    const { title, type, experience } = req.body;
+    const prompt = `You are an expert technical interviewer. Generate a list of 5-7 highly effective screening questions for a candidate with ${experience} years of experience for the ${title} (${type}) role.
+These questions should be conversational, easy to understand over the phone, and focused on high-signal topics suitable for their experience level.
+Do NOT provide answers, ONLY the questions. Format the output as a simple Markdown numbered list.`;
 
     const response = await callLLM(prompt);
     res.json({ text: response });
