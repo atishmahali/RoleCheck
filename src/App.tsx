@@ -32,7 +32,7 @@ export default function App() {
 
   // Handle theme
   useEffect(() => {
-    const savedTheme = localStorage.getItem('rolecheck-theme');
+    const savedTheme = localStorage.getItem('talentscreen-theme');
     if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       setTheme('dark');
       document.documentElement.classList.add('dark');
@@ -45,7 +45,7 @@ export default function App() {
   const toggleTheme = () => {
     setTheme(prev => {
       const next = prev === 'light' ? 'dark' : 'light';
-      localStorage.setItem('rolecheck-theme', next);
+      localStorage.setItem('talentscreen-theme', next);
       if (next === 'dark') {
         document.documentElement.classList.add('dark');
       } else {
@@ -57,7 +57,7 @@ export default function App() {
 
   // Load favorites from local storage
   useEffect(() => {
-    const saved = localStorage.getItem('rolecheck-favorites-v2');
+    const saved = localStorage.getItem('talentscreen-favorites-v2');
     if (saved) {
       try {
         setFavorites(new Set(JSON.parse(saved)));
@@ -69,7 +69,7 @@ export default function App() {
 
   // Save favorites to local storage
   useEffect(() => {
-    localStorage.setItem('rolecheck-favorites-v2', JSON.stringify(Array.from(favorites)));
+    localStorage.setItem('talentscreen-favorites-v2', JSON.stringify(Array.from(favorites)));
   }, [favorites]);
 
   const toggleFavorite = (id: string, type: Tab) => {
@@ -443,7 +443,7 @@ export default function App() {
                 </div>
                 <div className="flex flex-col">
                   <h1 className="text-xl md:text-2xl font-extrabold bg-gradient-to-r from-pink-500 to-violet-600 bg-clip-text text-transparent leading-none tracking-tight">
-                    RoleCheck
+                    TalentScreen
                   </h1>
                   <span className="text-[9px] md:text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mt-1">by Intervue.io</span>
                 </div>

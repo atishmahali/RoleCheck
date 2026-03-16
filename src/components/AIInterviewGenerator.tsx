@@ -18,7 +18,7 @@ function useSavedTemplates() {
   const [templates, setTemplates] = useState<SavedTemplate[]>([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('rolecheck-ai-templates');
+    const saved = localStorage.getItem('talentscreen-ai-templates');
     if (saved) {
       try {
         setTemplates(JSON.parse(saved));
@@ -36,14 +36,14 @@ function useSavedTemplates() {
     };
     const updated = [newTemplate, ...templates];
     setTemplates(updated);
-    localStorage.setItem('rolecheck-ai-templates', JSON.stringify(updated));
+    localStorage.setItem('talentscreen-ai-templates', JSON.stringify(updated));
     return newTemplate.id;
   };
 
   const deleteTemplate = (id: string) => {
     const updated = templates.filter(t => t.id !== id);
     setTemplates(updated);
-    localStorage.setItem('rolecheck-ai-templates', JSON.stringify(updated));
+    localStorage.setItem('talentscreen-ai-templates', JSON.stringify(updated));
   };
 
   return { templates, saveTemplate, deleteTemplate };
